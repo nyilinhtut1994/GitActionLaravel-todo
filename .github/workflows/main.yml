@@ -6,7 +6,15 @@ on:
       - main
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Declare
+        run: echo"test"
+     
   deploy-laravel:
+    needs: build                        
+    environment: deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
