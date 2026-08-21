@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Declare
-        run: echo"test"
+        run: |
+          echo "test"
      
   deploy-laravel:
     needs: build                        
