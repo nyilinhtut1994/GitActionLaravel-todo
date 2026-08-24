@@ -50,3 +50,32 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           script: "cd /home/ubuntu/devops && ./deploy.sh"
+          
+  deploy-laravel2:
+    #needs: build                  
+    runs-on: ubuntu-latest
+    # Runs ONLY when manually triggered via workflow_dispatch and 'deploy' is selected
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.action == 'deploy' }}
+    steps:
+      - name: Verify DevOps Authorization
+        run: |
+          # Replace with your authorized GitHub username(s)
+          DEVOPS_TEAM="${{ vars.DEVOPS_TEAM }}"
+          
+          echo "Checking user: ${{ github.actor }}"
+          if [[ " $DEVOPS_TEAM " =~ " ${{ github.actor }} " ]]; then
+            echo "Access granted: ${{ github.actor }} is authorized to deploy."
+          else
+            echo "Access Denied: ${{ github.actor }} is not allowed to run CD deployments."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+      
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          script: "cd /home/ubuntu/devops && ./deploy.sh"
