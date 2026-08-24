@@ -1,10 +1,6 @@
 name: Laravel Deployment Test
 
 on:
-  push:
-    branches:
-      - main
-
   workflow_dispatch:
     inputs:
       action:
