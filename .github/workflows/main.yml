@@ -14,7 +14,7 @@ on:
         type: choice
         options:
           - build
-          - deploy-laravel
+          - deploy
 
 jobs:
   build:
