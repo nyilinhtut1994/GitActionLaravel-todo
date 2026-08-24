@@ -27,7 +27,7 @@ jobs:
           echo "Running build/test phase..."
 
   deploy-laravel:
-    needs: build                  
+    #needs: build                  
     runs-on: ubuntu-latest
     # Runs ONLY when manually triggered via workflow_dispatch and 'deploy' is selected
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.action == 'deploy' }}
