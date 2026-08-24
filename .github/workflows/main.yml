@@ -1,24 +1,52 @@
-name: Deployment
+name: Laravel Deployment Test
 
 on:
   push:
     branches:
       - main
 
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Select CI Build or CD Deploy'
+        required: true
+        default: 'build'
+        type: choice
+        options:
+          - build
+          - deploy
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Runs automatically on push to main, OR if manually selected via dropdown
+    if: ${{ github.event_name == 'push' || inputs.action == 'build' }}
     steps:
       - name: Declare
         run: |
-          echo "test"
-     
+          echo "Running build/test phase..."
+
   deploy-laravel:
-    needs: build                        
-    environment: deploy
+    needs: build                  
     runs-on: ubuntu-latest
+    # Runs ONLY when manually triggered via workflow_dispatch and 'deploy' is selected
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.action == 'deploy' }}
     steps:
+      - name: Verify DevOps Authorization
+        run: |
+          # Replace with your authorized GitHub username(s)
+          DEVOPS_TEAM="${{ vars.DEVOPS_TEAM }}"
+          
+          echo "Checking user: ${{ github.actor }}"
+          if [[ " $DEVOPS_TEAM " =~ " ${{ github.actor }} " ]]; then
+            echo "Access granted: ${{ github.actor }} is authorized to deploy."
+          else
+            echo "Access Denied: ${{ github.actor }} is not allowed to run CD deployments."
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
+      
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1.0.3
         with:
