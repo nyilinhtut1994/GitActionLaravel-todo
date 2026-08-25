@@ -3,6 +3,11 @@ name: Laravel Deployment Test
 on:
   workflow_dispatch:
     inputs:
+      target_branch:
+        description: 'Branch to build'
+        required: true
+        default: 'main'
+        type: string
       action:
         description: 'Select CI Build or CD Deploy'
         required: true
